@@ -3,10 +3,10 @@
 NAME = "Teamspeak 3 Server"
 DOMAIN = "teamspeak"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 MANUFACTURER = "TeamSpeak Systems, Inc"
 ATTRIBUTION = f"Data from this is provided by a Teamspeak 3 Server by {MANUFACTURER}."
-ISSUE_URL = "https://github.com/Larsiiii/teamspeak-homeassistant-integration/issues"
+ISSUE_URL = "https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/issues"
 
 # Icons
 ICON = "mdi:headset"

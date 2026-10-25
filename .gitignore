@@ -1,2 +1,18 @@
 __pycache__
+*.pyc
 pythonenv*
+.venv/
+
+# Home Assistant development configuration
+.devcontainer/.HA_VERSION
+.devcontainer/.storage/
+.devcontainer/.uuid
+.devcontainer/.cloud/
+.devcontainer/blueprints/
+.devcontainer/custom_components
+.devcontainer/deps/
+.devcontainer/tts/
+.devcontainer/home-assistant.log
+.devcontainer/home-assistant.log.*
+.devcontainer/home-assistant_v2.db
+.devcontainer/home-assistant_v2.db-*

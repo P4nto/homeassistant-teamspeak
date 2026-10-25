@@ -4,25 +4,19 @@
         {
             "label": "Run Home Assistant on port 9123",
             "type": "shell",
-            "command": "container start",
+            "command": ".venv/bin/hass -c .devcontainer",
             "problemMatcher": []
         },
         {
-            "label": "Run Home Assistant configuration against /config",
+            "label": "Check Home Assistant configuration",
             "type": "shell",
-            "command": "container check",
+            "command": ".venv/bin/hass -c .devcontainer --script check_config",
             "problemMatcher": []
         },
         {
-            "label": "Upgrade Home Assistant to latest dev",
+            "label": "Lint integration",
             "type": "shell",
-            "command": "container install",
-            "problemMatcher": []
-        },
-        {
-            "label": "Install a specific version of Home Assistant",
-            "type": "shell",
-            "command": "container set-version",
+            "command": ".venv/bin/flake8 custom_components/teamspeak && .venv/bin/isort --check-only custom_components/teamspeak && .venv/bin/black --check custom_components/teamspeak",
             "problemMatcher": []
         }
     ]

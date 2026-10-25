@@ -2,7 +2,7 @@
 Custom integration to integrate a Teamspeak 3 Server with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/Larsiiii/teamspeak-homeassistant-integration
+https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak
 """
 import asyncio
 from datetime import timedelta
@@ -14,7 +14,6 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import TeamspeakApiClient
-
 from .const import (
     CONF_HOST,
     CONF_PASSWORD,

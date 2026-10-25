@@ -1,14 +1,14 @@
 {
   "domain": "teamspeak",
   "name": "Teamspeak 3 Server",
-  "documentation": "https://github.com/Larsiiii/teamspeak-homeassistant-integration",
-  "issue_tracker": "https://github.com/Larsiiii/teamspeak-homeassistant-integration/issues",
+  "documentation": "https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak",
+  "issue_tracker": "https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/issues",
   "dependencies": [],
   "version": "0.2.0",
   "iot_class": "cloud_polling",
   "config_flow": true,
   "codeowners": [
-    "@Larsiiii"
+    "@p4nto"
   ],
   "requirements": [
     "ts3==1.0.11"

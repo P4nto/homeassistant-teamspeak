@@ -1,43 +1,49 @@
-## Developing with Visual Studio Code + devcontainer
+# Developing with Visual Studio Code and devcontainers
 
-The easiest way to get started with custom integration development is to use Visual Studio Code with devcontainers. This approach will create a preconfigured development environment with all the tools you need.
+The devcontainer provides a Python 3.10 environment with Home Assistant 2022.6.7, the
+`ts3` dependency and the linting tools used by this repository.
 
-In the container you will have a dedicated Home Assistant core instance running with your custom component code. You can configure this instance by updating the `./devcontainer/configuration.yaml` file.
+## Prerequisites
 
-**Prerequisites**
+- [Git](https://git-scm.com/)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
-- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- Docker
-  -  For Linux, macOS, or Windows 10 Pro/Enterprise/Education use the [current release version of Docker](https://docs.docker.com/install/)
-  -   Windows 10 Home requires [WSL 2](https://docs.microsoft.com/windows/wsl/wsl2-install) and the current Edge version of Docker Desktop (see instructions [here](https://docs.docker.com/docker-for-windows/wsl-tech-preview/)). This can also be used for Windows Pro/Enterprise/Education.
-- [Visual Studio code](https://code.visualstudio.com/)
-- [Remote - Containers (VSC Extension)][extension-link]
+## Getting started
 
-[More info about requirements and devcontainer in general](https://code.visualstudio.com/docs/remote/containers#_getting-started)
+1. Clone the repository.
+2. Open the repository in Visual Studio Code.
+3. Select **Reopen in Container** when prompted, or run
+   **Dev Containers: Reopen in Container** from the command palette.
 
-[extension-link]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
+On the first start, `.devcontainer/setup.sh` creates `.venv`, installs
+`requirements-dev.txt` and links `custom_components` into the development
+configuration. The Home Assistant configuration lives in
+`.devcontainer/configuration.yaml`.
 
-**Getting started:**
+## Tasks
 
-1. Fork the repository.
-2. Clone the repository to your computer.
-3. Open the repository using Visual Studio code.
-
-When you open this repository with Visual Studio code you are asked to "Reopen in Container", this will start the build of the container.
-
-_If you don't see this notification, open the command palette and select `Remote-Containers: Reopen Folder in Container`._
-
-### Tasks
-
-The devcontainer comes with some useful tasks to help you with development, you can start these tasks by opening the command palette and select `Tasks: Run Task` then select the task you want to run.
-
-When a task is currently running (like `Run Home Assistant on port 9123` for the docs), it can be restarted by opening the command palette and selecting `Tasks: Restart Running Task`, then select the task you want to restart.
-
-The available tasks are:
+Run **Tasks: Run Task** from the command palette. The available tasks are:
 
 Task | Description
 -- | --
-Run Home Assistant on port 9123 | Launch Home Assistant with your custom component code and the configuration defined in `.devcontainer/configuration.yaml`.
-Run Home Assistant configuration against /config | Check the configuration.
-Upgrade Home Assistant to latest dev | Upgrade the Home Assistant core version in the container to the latest version of the `dev` branch.
-Install a specific version of Home Assistant | Install a specific version of Home Assistant core in the container.
+Run Home Assistant on port 9123 | Start Home Assistant with the integration and the configuration in `.devcontainer/configuration.yaml`.
+Check Home Assistant configuration | Validate the Home Assistant configuration.
+Lint integration | Run flake8, isort and black against `custom_components/teamspeak`.
+
+Home Assistant is available at <http://localhost:9123>.
+
+## Manual commands
+
+```bash
+.venv/bin/hass -c .devcontainer
+.venv/bin/hass -c .devcontainer --script check_config
+.venv/bin/flake8 custom_components/teamspeak
+.venv/bin/isort --check-only custom_components/teamspeak
+.venv/bin/black --check custom_components/teamspeak
+```
+
+The pinned Home Assistant version is intentionally kept at 2022.6.7 for the
+initial baseline. Modernizing the integration for a current Home Assistant
+release is tracked as a separate task.

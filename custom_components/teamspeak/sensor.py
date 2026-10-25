@@ -1,5 +1,5 @@
 """Sensor platform for Teamspeak 3 Server."""
-from .const import DEFAULT_NAME, DOMAIN, ICON, SENSOR
+from .const import DOMAIN, ICON
 from .entity import TeamspeakEntity
 
 

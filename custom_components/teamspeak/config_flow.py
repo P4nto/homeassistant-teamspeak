@@ -1,16 +1,9 @@
 """Adds config flow for Teamspeak 3."""
 from homeassistant import config_entries
-from homeassistant.core import callback
 import voluptuous as vol
 
 from .api import TeamspeakApiClient
-from .const import (
-    CONF_HOST,
-    CONF_PASSWORD,
-    CONF_USERNAME,
-    DOMAIN,
-    PLATFORMS,
-)
+from .const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, DOMAIN, PLATFORMS
 
 
 class TeamspeakFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):

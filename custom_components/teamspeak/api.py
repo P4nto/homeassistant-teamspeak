@@ -1,5 +1,6 @@
 """Teamspeak 3 API Client."""
 import logging
+
 import ts3
 
 TIMEOUT = 10
