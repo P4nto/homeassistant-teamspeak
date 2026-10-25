@@ -1,11 +1,6 @@
-homeassistant==2022.6.7
+homeassistant==2026.10.3
+pytest-homeassistant-custom-component==0.13.374
+pytest-cov==7.1.0
+ruff==0.17.2
+
 ts3==1.0.11
-
-# hass-nabucasa 0.54.0 / acme 1.22.0 need josepy 1.x
-acme==1.22.0
-josepy==1.13.0
-
-black==22.3.0
-flake8==4.0.1
-isort==5.10.1
-pylint==2.13.9

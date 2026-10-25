@@ -1,67 +1,55 @@
-[![GitHub Release][releases-shield]][releases]
-[![License][license-shield]](LICENSE)
+[![Pipeline](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/badges/master/pipeline.svg)](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/pipelines)
+[![Latest release](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/badges/release.svg)](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/releases)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-[![hacs][hacsbadge]][hacs]
+_Component to integrate a [TeamSpeak 3 Server](https://www.teamspeak.com/en/) with Home Assistant._
 
-_Component to integrate with a [Teamspeak 3 Server instance][teamspeak3_server]._
+_DISCLAIMER: This project is a private open source project and is not affiliated with TeamSpeak Systems, Inc._
 
-_DISCLAIMER: This project is a private open source project and doesn't have any connection with TeamSpeak Systems, Inc._
-
-**This component will set up the following platforms.**
+**This component sets up the following platform.**
 
 Platform | Description
 -- | --
-`sensor` | Shows info from the configured Teamspeak 3 Server.
+`sensor` | Shows the status and details of the configured TeamSpeak 3 Server.
 
+The sensor state is the virtual server status. The following information is
+available as attributes.
 
-The following information can be found under Attributes
 ### Serverinfo
+
 Attribute | Description
 -- | --
-`unique_identifier` | Unique identifier of the configured Teamspeak Server
+`unique_identifier` | Unique identifier of the TeamSpeak server
 `status` | Online status
-`name` | Servername
-`platform` | Platform the server is hosted on (e.g Windows, Linux, Mac)
-`port` | Port the server listens on
-`version` | Currently installed Teamspeak verison
-`maxclients` | Maximum simultaneous allowed client connections
+`name` | Server name
+`platform` | Platform the server is hosted on
+`port` | Voice port the server listens on
+`version` | Installed TeamSpeak version
+`maxclients` | Maximum number of simultaneous client connections
 `reservedslots` | Number of reserved slots
-`clientsonline` | Number of connections (includes Server query users)
+`clientsonline` | Number of connections (including ServerQuery clients)
 `clientconnections` | Number of connected clients
 `channelsonline` | Number of available channels
-`created` | Unix time stamp of server creation date
-`uptime` | Seconds since server start
+`created` | Unix timestamp of the server creation date
+`uptime` | Seconds since the server started
 
-### Clients
-### Channels
+The complete `clientlist` and `channellist` responses are available as the
+`clients` and `channels` attributes.
 
-{% if not installed %}
 ## Installation
 
-1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Teamspeak 3 Server"
-2. Enter the IP address of your Teamspeak 3 Server
-3. Enter username and password for a valid Server Query Account. The credentials for the Server Query Admin Account can be found in the Teamspeak server logs after the first start:
-```
-------------------------------------------------------------------
-               Server Query Admin Account created
-         loginname= "serveradmin", password= "ZS8PRONS"
-         apikey= "BADUFzEGXK60NntGmTWYGkfH6nSrM9Dh_SThG7X"
-------------------------------------------------------------------
-```
+HACS and the Home Assistant Marketplace only support GitHub repositories. This
+fork is hosted on GitLab, so install it manually.
 
-{% endif %}
-
+1. Place the `custom_components/teamspeak` directory in your Home Assistant
+   configuration directory.
+2. Restart Home Assistant.
+3. Add the integration under **Settings -> Devices & services**.
 
 ## Configuration is done in the UI
 
-<!---->
-
-***
-
-[teamspeak3_server]: https://www.teamspeak.com/en/
-[hacs]: https://github.com/custom-components/hacs
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[license-shield]: https://img.shields.io/github/license/Larsiiii/teamspeak-homeassistant-integration.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/Larsiiii/teamspeak-homeassistant-integration.svg?style=for-the-badge
-[releases]: https://github.com/Larsiiii/teamspeak-homeassistant-integration/releases
-
+1. Go to **Settings -> Devices & services -> Add integration**.
+2. Search for **Teamspeak 3 Server**.
+3. Enter the host and a valid ServerQuery account.
+4. The ServerQuery admin credentials are shown in the TeamSpeak server log after
+   the first start.

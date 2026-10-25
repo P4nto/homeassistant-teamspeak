@@ -2,6 +2,12 @@ __pycache__
 *.pyc
 pythonenv*
 .venv/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+report.xml
 
 # Home Assistant development configuration
 .devcontainer/.HA_VERSION
