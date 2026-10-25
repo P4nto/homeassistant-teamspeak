@@ -15,18 +15,30 @@ Merge requests are the best way to propose changes to the codebase.
 
 1. Fork the repo and create your branch from `master`.
 2. If you've changed something, update the documentation.
-3. Make sure your code lints (using black).
-4. Test your contribution.
-5. Open a merge request!
+3. Make sure your code lints and the tests pass.
+4. Open a merge request!
+
+## Development checks
+
+The project uses [Ruff](https://docs.astral.sh/ruff/) and
+[pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component).
+
+```bash
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/pytest
+```
+
+The GitLab pipeline runs the same checks plus Hassfest.
 
 ## Any contributions you make will be under the MIT Software License
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
 
-## Report bugs using GitLab [issues](../../-/issues)
+## Report bugs using GitLab [issues](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/issues)
 
 GitLab issues are used to track public bugs.
-Report a bug by [opening a new issue](../../-/issues/new); it's that easy!
+Report a bug by [opening a new issue](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/issues/new); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
 
@@ -41,19 +53,6 @@ Report a bug by [opening a new issue](../../-/issues/new); it's that easy!
 - Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
 
 People *love* thorough bug reports. I'm not even kidding.
-
-## Use a Consistent Coding Style
-
-Use [black](https://github.com/psf/black) to make sure the code follows the style.
-
-## Test your code modification
-
-This custom component is based on [integration_blueprint template](https://github.com/custom-components/integration_blueprint).
-
-It comes with a development environment in a container, easy to launch if you
-use Visual Studio Code. With this container you will have a standalone Home
-Assistant instance running and already configured with the included
-[`.devcontainer/configuration.yaml`](.devcontainer/configuration.yaml) file.
 
 ## License
 

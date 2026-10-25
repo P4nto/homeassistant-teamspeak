@@ -1,7 +1,7 @@
 # Developing with Visual Studio Code and devcontainers
 
-The devcontainer provides a Python 3.10 environment with Home Assistant 2022.6.7, the
-`ts3` dependency and the linting tools used by this repository.
+The devcontainer provides a Python 3.14 environment with Home Assistant
+2026.10.3, the integration dependencies, Ruff and the test dependencies.
 
 ## Prerequisites
 
@@ -18,8 +18,8 @@ The devcontainer provides a Python 3.10 environment with Home Assistant 2022.6.7
    **Dev Containers: Reopen in Container** from the command palette.
 
 On the first start, `.devcontainer/setup.sh` creates `.venv`, installs
-`requirements-dev.txt` and links `custom_components` into the development
-configuration. The Home Assistant configuration lives in
+`requirements-dev.txt`, verifies the dependencies and links `custom_components`
+into the development configuration. The Home Assistant configuration lives in
 `.devcontainer/configuration.yaml`.
 
 ## Tasks
@@ -30,7 +30,8 @@ Task | Description
 -- | --
 Run Home Assistant on port 9123 | Start Home Assistant with the integration and the configuration in `.devcontainer/configuration.yaml`.
 Check Home Assistant configuration | Validate the Home Assistant configuration.
-Lint integration | Run flake8, isort and black against `custom_components/teamspeak`.
+Lint integration | Run Ruff against the repository.
+Run tests | Run the PHCC test suite.
 
 Home Assistant is available at <http://localhost:9123>.
 
@@ -39,11 +40,7 @@ Home Assistant is available at <http://localhost:9123>.
 ```bash
 .venv/bin/hass -c .devcontainer
 .venv/bin/hass -c .devcontainer --script check_config
-.venv/bin/flake8 custom_components/teamspeak
-.venv/bin/isort --check-only custom_components/teamspeak
-.venv/bin/black --check custom_components/teamspeak
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/pytest
 ```
-
-The pinned Home Assistant version is intentionally kept at 2022.6.7 for the
-initial baseline. Modernizing the integration for a current Home Assistant
-release is tracked as a separate task.

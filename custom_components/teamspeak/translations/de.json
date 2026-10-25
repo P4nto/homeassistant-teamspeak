@@ -1,0 +1,31 @@
+{
+  "title": "Teamspeak 3 Server",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Teamspeak 3 Server",
+        "description": "Richte deinen TeamSpeak-3-Server ein. Verwende ein ServerQuery-Konto; die Zugangsdaten stehen nach dem ersten Start im Server-Log. Dokumentation: {documentation_url}",
+        "data": {
+          "host": "Host",
+          "username": "Benutzername",
+          "password": "Passwort"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Teamspeak 3 Server erneut authentifizieren",
+        "description": "Die ServerQuery-Zugangsdaten für {host} sind nicht mehr gültig. Gib die aktuellen Zugangsdaten ein.",
+        "data": {
+          "username": "Benutzername",
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Die ServerQuery-Zugangsdaten wurden abgelehnt.",
+      "cannot_connect": "Verbindung zum TeamSpeak-Server fehlgeschlagen oder Daten konnten nicht gelesen werden."
+    },
+    "abort": {
+      "already_configured": "Dieser TeamSpeak-Server ist bereits eingerichtet."
+    }
+  }
+}

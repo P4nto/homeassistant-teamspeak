@@ -1,0 +1,31 @@
+{
+  "title": "Teamspeak 3 Server",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Teamspeak 3 Server",
+        "description": "Set up your TeamSpeak 3 Server. Use a ServerQuery account; the credentials are shown in the server log after the first start. Documentation: {documentation_url}",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Teamspeak 3 Server",
+        "description": "The ServerQuery credentials for {host} are no longer valid. Enter the current credentials.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The ServerQuery credentials were rejected.",
+      "cannot_connect": "Could not connect to the TeamSpeak server or read its data."
+    },
+    "abort": {
+      "already_configured": "This TeamSpeak server is already configured."
+    }
+  }
+}

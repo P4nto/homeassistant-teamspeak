@@ -1,41 +1,40 @@
-"""Sensor platform for Teamspeak 3 Server."""
-from .const import DOMAIN, ICON
+"""Sensor platform for the Teamspeak 3 Server integration."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+
+from .const import ICON
+from .coordinator import TeamspeakConfigEntry
 from .entity import TeamspeakEntity
 
-
-async def async_setup_entry(hass, entry, async_add_devices):
-    """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_devices([TeamspeakSensor(coordinator, entry)])
+PARALLEL_UPDATES = 0
 
 
-class TeamspeakSensor(TeamspeakEntity):
-    """teamspeak Sensor class."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: TeamspeakConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
+    """Set up the sensor platform."""
+    async_add_entities([TeamspeakSensor(entry.runtime_data)])
 
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        serverinfo = self.coordinator.data.get("serverinfo")
-        if serverinfo is not None:
-            return self.coordinator.data.get("serverinfo").get("name")
-        else:
-            return "No Connection to Server"
+
+class TeamspeakSensor(TeamspeakEntity, SensorEntity):
+    """Sensor showing the state of a TeamSpeak 3 Server."""
+
+    _attr_icon = ICON
 
     @property
-    def state(self):
-        """Return the state of the sensor."""
-        serverinfo = self.coordinator.data.get("serverinfo")
-        if serverinfo is not None:
-            return self.coordinator.data.get("serverinfo").get("status")
-        else:
-            return "No Connection to Server"
+    def native_value(self) -> str | None:
+        """Return the server status."""
+        return self.coordinator.data["serverinfo"].get("status")
 
     @property
-    def icon(self):
-        """Return the icon of the sensor."""
-        return ICON
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return self.coordinator.data
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the server details."""
+        return dict(self.coordinator.data)

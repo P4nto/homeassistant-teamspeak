@@ -1,33 +1,37 @@
-"""Teamspeak 3 Server entity class"""
+"""Base entity for the Teamspeak 3 Server integration."""
+
+from __future__ import annotations
+
+from homeassistant.const import CONF_HOST
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION, DOMAIN, MANUFACTURER
+from .coordinator import TeamspeakDataUpdateCoordinator
 
 
-class TeamspeakEntity(CoordinatorEntity):
-    def __init__(self, coordinator, config_entry):
+class TeamspeakEntity(CoordinatorEntity[TeamspeakDataUpdateCoordinator]):
+    """Base entity for a TeamSpeak 3 Server."""
+
+    _attr_attribution = ATTRIBUTION
+    _attr_has_entity_name = True
+    _attr_name = None
+
+    def __init__(self, coordinator: TeamspeakDataUpdateCoordinator) -> None:
+        """Initialize the entity."""
         super().__init__(coordinator)
-        self.config_entry = config_entry
+        self._attr_unique_id = coordinator.config_entry.entry_id
 
     @property
-    def unique_id(self):
-        """Return a unique ID to use for this entity."""
-        return self.config_entry.entry_id
-
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self.unique_id)},
-            "name": self.name,
-            "model": self.coordinator.data.get("serverinfo").get("version"),
-            "manufacturer": MANUFACTURER,
-        }
-
-    @property
-    def device_state_attributes(self):
-        """Return the state attributes."""
-        return {
-            "attribution": ATTRIBUTION,
-            "id": str(self.coordinator.data.get("id")),
-            "integration": DOMAIN,
-        }
+    def device_info(self) -> DeviceInfo:
+        """Return the device information."""
+        serverinfo = self.coordinator.data["serverinfo"]
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.coordinator.config_entry.entry_id)},
+            name=serverinfo.get("name")
+            or self.coordinator.config_entry.data[CONF_HOST],
+            manufacturer=MANUFACTURER,
+            model="TeamSpeak 3 Server",
+            sw_version=serverinfo.get("version"),
+            entry_type=DeviceEntryType.SERVICE,
+        )

@@ -16,7 +16,13 @@
         {
             "label": "Lint integration",
             "type": "shell",
-            "command": ".venv/bin/flake8 custom_components/teamspeak && .venv/bin/isort --check-only custom_components/teamspeak && .venv/bin/black --check custom_components/teamspeak",
+            "command": ".venv/bin/ruff check . && .venv/bin/ruff format --check .",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run tests",
+            "type": "shell",
+            "command": ".venv/bin/pytest",
             "problemMatcher": []
         }
     ]
