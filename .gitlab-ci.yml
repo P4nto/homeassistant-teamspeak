@@ -1,7 +1,7 @@
 # Lint, test, validate and release the Teamspeak 3 Server integration.
 #
 # Tags:
-#   - Git tag v0.3.0 (or 0.3.0) -> creates a GitLab Release, attaches the
+#   - Git tag vX.Y.Z (or X.Y.Z) -> creates a GitLab Release, attaches the
 #     integration archive and mirrors the release to GitHub for HACS.
 #   - Merge requests and pushes to the default branch run lint, test and hassfest.
 #   - The default branch and version tags are force-pushed to the configured

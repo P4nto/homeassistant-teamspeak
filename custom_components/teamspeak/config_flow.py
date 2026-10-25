@@ -88,9 +88,20 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
             except TeamspeakApiClientCommunicationError:
                 errors["base"] = "cannot_connect"
             else:
+                unique_id = data["serverinfo"]["unique_identifier"]
+                existing_entry = (
+                    self.hass.config_entries.async_entry_for_domain_unique_id(
+                        DOMAIN, unique_id
+                    )
+                )
+                if (
+                    existing_entry is not None
+                    and existing_entry.entry_id != reauth_entry.entry_id
+                ):
+                    return self.async_abort(reason="already_configured")
                 return self.async_update_reload_and_abort(
                     reauth_entry,
-                    unique_id=data["serverinfo"]["unique_identifier"],
+                    unique_id=unique_id,
                     data_updates={
                         CONF_USERNAME: user_input[CONF_USERNAME],
                         CONF_PASSWORD: user_input[CONF_PASSWORD],

@@ -28,6 +28,7 @@ class TeamspeakSensor(TeamspeakEntity, SensorEntity):
     """Sensor showing the state of a TeamSpeak 3 Server."""
 
     _attr_icon = ICON
+    _unrecorded_attributes = frozenset({"clients", "channels"})
 
     @property
     def native_value(self) -> str | None:

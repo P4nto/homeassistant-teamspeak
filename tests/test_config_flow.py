@@ -142,6 +142,43 @@ async def test_reauth_flow(hass):
     assert entry.data[CONF_PASSWORD] == "new-password"
 
 
+async def test_reauth_flow_aborts_on_unique_id_collision(hass):
+    """Test that reauth cannot steal another entry's unique ID."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data=CONFIG_DATA,
+        unique_id="server-uuid",
+    )
+    entry.add_to_hass(hass)
+    reauth_entry = MockConfigEntry(
+        domain=DOMAIN,
+        data=CONFIG_DATA,
+        unique_id="other-uuid",
+    )
+    reauth_entry.add_to_hass(hass)
+
+    with patch(CONFIG_FLOW_CLIENT) as client_class:
+        client_class.return_value.get_data.return_value = SERVER_DATA
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={
+                "source": config_entries.SOURCE_REAUTH,
+                "entry_id": reauth_entry.entry_id,
+            },
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_USERNAME: "new-user",
+                CONF_PASSWORD: "new-password",
+            },
+        )
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "already_configured"
+
+
 async def test_reauth_flow_invalid_credentials(hass):
     """Test a failed re-authentication."""
     entry = MockConfigEntry(domain=DOMAIN, data=CONFIG_DATA)

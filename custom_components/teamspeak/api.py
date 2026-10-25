@@ -69,6 +69,14 @@ def _is_auth_error(error: ts3.query.TS3QueryError) -> bool:
     return str(error.resp.error.get("id")) in _AUTH_ERROR_IDS
 
 
+def _close_session(session: ts3.query.TS3Connection) -> None:
+    """Close a session without masking the original error."""
+    try:
+        session.close()
+    except Exception:
+        _LOGGER.debug("Error while closing the TeamSpeak session", exc_info=True)
+
+
 class TeamspeakApiClient:
     """Client for the TeamSpeak 3 ServerQuery interface."""
 
@@ -96,7 +104,7 @@ class TeamspeakApiClient:
                 client_login_password=self._password,
             )
         except ts3.query.TS3QueryError as err:
-            session.close()
+            _close_session(session)
             if _is_auth_error(err):
                 raise TeamspeakApiClientAuthenticationError(
                     "The TeamSpeak ServerQuery credentials were rejected"
@@ -105,9 +113,17 @@ class TeamspeakApiClient:
                 f"TeamSpeak ServerQuery error: {err}"
             ) from err
         except (OSError, TimeoutError, ts3.query.TS3RecvError) as err:
-            session.close()
+            _close_session(session)
             raise TeamspeakApiClientCommunicationError(
                 f"Could not connect to the TeamSpeak server: {err}"
+            ) from err
+        except Exception as err:
+            _close_session(session)
+            _LOGGER.debug(
+                "Unexpected error while connecting to TeamSpeak", exc_info=True
+            )
+            raise TeamspeakApiClientCommunicationError(
+                f"Unexpected error while connecting to the TeamSpeak server: {err}"
             ) from err
 
         self._session = session
@@ -147,6 +163,14 @@ class TeamspeakApiClient:
             self.close()
             raise TeamspeakApiClientCommunicationError(
                 f"Could not read data from the TeamSpeak server: {err}"
+            ) from err
+        except Exception as err:
+            self.close()
+            _LOGGER.debug(
+                "Unexpected error while reading TeamSpeak data", exc_info=True
+            )
+            raise TeamspeakApiClientCommunicationError(
+                f"Unexpected error while reading data from the TeamSpeak server: {err}"
             ) from err
 
         version = (serverinfo.get("virtualserver_version") or "").split(maxsplit=1)

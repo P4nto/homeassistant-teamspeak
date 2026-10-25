@@ -34,17 +34,22 @@ Attribute | Description
 `uptime` | Seconds since the server started
 
 The complete `clientlist` and `channellist` responses are available as the
-`clients` and `channels` attributes.
+`clients` and `channels` attributes. They are excluded from recorder history to
+avoid storing client names and large lists.
 
 ## Installation
 
-HACS and the Home Assistant Marketplace only support GitHub repositories. This
-fork is hosted on GitLab, so install it manually.
+The GitLab repository is mirrored to GitHub for HACS. Add
+`https://github.com/P4nto/homeassistant-teamspeak` as a custom integration
+repository in **HACS -> Integrations -> three-dot menu -> Custom repositories**,
+install it and restart Home Assistant. See the README for manual installation.
 
-1. Place the `custom_components/teamspeak` directory in your Home Assistant
-   configuration directory.
-2. Restart Home Assistant.
-3. Add the integration under **Settings -> Devices & services**.
+## Security
+
+TeamSpeak's ServerQuery protocol uses an unencrypted Telnet connection on port
+`10011`. Do not expose this port to the internet. Restrict it to Home Assistant,
+your local network or a VPN, and use a dedicated ServerQuery account with only
+the required permissions.
 
 ## Configuration is done in the UI
 

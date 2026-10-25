@@ -106,6 +106,32 @@ def test_query_error() -> None:
     session.quit.assert_called_once()
 
 
+def test_unexpected_login_error_closes_session() -> None:
+    """Test that an unexpected login error closes the new session."""
+    session = _session()
+    session.login.side_effect = RuntimeError("unexpected")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        with pytest.raises(TeamspeakApiClientCommunicationError):
+            client.get_data()
+
+    session.close.assert_called_once()
+
+
+def test_unexpected_data_error_closes_session() -> None:
+    """Test that an unexpected query error closes the existing session."""
+    session = _session()
+    session.serverinfo.side_effect = RuntimeError("unexpected")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        with pytest.raises(TeamspeakApiClientCommunicationError):
+            client.get_data()
+
+    session.quit.assert_called_once()
+
+
 def test_close() -> None:
     """Test closing the session."""
     session = _session()
