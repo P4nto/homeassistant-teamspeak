@@ -1,9 +1,11 @@
 # Lint, test, validate and release the Teamspeak 3 Server integration.
 #
 # Tags:
-#   - Git tag v0.3.0 (or 0.3.0) -> creates a GitLab Release and attaches the
-#     integration archive. The tag must match the manifest version.
+#   - Git tag v0.3.0 (or 0.3.0) -> creates a GitLab Release, attaches the
+#     integration archive and mirrors the release to GitHub for HACS.
 #   - Merge requests and pushes to the default branch run lint, test and hassfest.
+#   - The default branch and version tags are force-pushed to the configured
+#     GitHub fork. Requires GITHUB_REPOSITORY and a protected GITHUB_TOKEN.
 
 stages:
   - lint
@@ -108,3 +110,65 @@ create-release:
         --header "Content-Type: application/json" \
         --data "{\"name\":\"Teamspeak 3 Server ${CI_COMMIT_TAG}\",\"tag_name\":\"${CI_COMMIT_TAG}\",\"ref\":\"${CI_COMMIT_TAG}\",\"description\":\"Teamspeak 3 Server integration ${CI_COMMIT_TAG}\",\"assets\":{\"links\":[{\"name\":\"Integration archive\",\"url\":\"${PACKAGE_URL}\",\"filepath\":\"/${ARCHIVE}\",\"link_type\":\"package\"}]}}" \
         "$RELEASE_URL"
+
+mirror-github:
+  stage: release
+  image: alpine:3.21
+  interruptible: false
+  resource_group: github-mirror
+  needs:
+    - lint
+    - test
+    - hassfest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG =~ /^v?\d+\.\d+\.\d+$/'
+  variables:
+    GIT_DEPTH: "0"
+  before_script:
+    - apk add --no-cache curl git jq
+    - test -n "${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}"
+    - test -n "${GITHUB_TOKEN:?GITHUB_TOKEN is required}"
+    - git config --global user.name "GitLab CI"
+    - git config --global user.email "ci@gitlab.p4nto.de"
+    - |
+      git config --global credential.helper store
+      printf 'https://x-access-token:%s@github.com\n' "$GITHUB_TOKEN" > "$HOME/.git-credentials"
+      chmod 600 "$HOME/.git-credentials"
+    - |
+      git remote remove github 2>/dev/null || true
+      git remote add github "https://github.com/${GITHUB_REPOSITORY}.git"
+  script:
+    - |
+      set -euo pipefail
+      git push --force github "HEAD:refs/heads/${CI_DEFAULT_BRANCH}"
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then
+        git push --force github "refs/tags/${CI_COMMIT_TAG}:refs/tags/${CI_COMMIT_TAG}"
+        RELEASE_API="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases"
+        PAYLOAD="$(jq -nc \
+          --arg tag "$CI_COMMIT_TAG" \
+          --arg name "Teamspeak 3 Server $CI_COMMIT_TAG" \
+          --arg body "Modernized Teamspeak 3 Server integration for Home Assistant. See the GitLab release for details." \
+          '{tag_name: $tag, name: $name, body: $body, draft: false, prerelease: false, make_latest: "true"}')"
+        if EXISTING="$(curl -fsS \
+          --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+          --header "Accept: application/vnd.github+json" \
+          "${RELEASE_API}/tags/${CI_COMMIT_TAG}" 2>/dev/null)"; then
+          RELEASE_ID="$(printf '%s' "$EXISTING" | jq -r '.id')"
+          curl --fail --silent --show-error --request PATCH \
+            --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${RELEASE_API}/${RELEASE_ID}" > /dev/null
+        else
+          curl --fail --silent --show-error --request POST \
+            --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${RELEASE_API}" > /dev/null
+        fi
+      fi
+  after_script:
+    - rm -f "$HOME/.git-credentials"
