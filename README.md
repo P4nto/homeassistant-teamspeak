@@ -38,7 +38,7 @@ Sensor | Description
 -- | --
 Server status | Virtual server status (for example `online`)
 Clients online | Number of active voice clients. ServerQuery connections such as `serveradmin` are not counted.
-Uptime | Seconds since the server started, displayed as a duration
+Uptime | Uptime in days, hours and minutes, localized to the Home Assistant language
 
 The server status sensor exposes the following information as attributes.
 
