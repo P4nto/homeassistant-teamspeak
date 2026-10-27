@@ -101,7 +101,9 @@ custom_components/teamspeak/
 ├── api.py
 ├── brand/
 │   ├── icon.png
-│   └── icon@2x.png
+│   ├── icon@2x.png
+│   ├── logo.png
+│   └── logo@2x.png
 ├── config_flow.py
 ├── const.py
 ├── coordinator.py
@@ -178,6 +180,6 @@ If you want to contribute, please read the
 ## Credits
 
 - Original integration by [Larsiiii](https://github.com/Larsiiii).
-- The generic headset brand icon is based on
+- The generic headset brand icon and logo are based on
   [Material Design Icons](https://pictogrammers.com/library/mdi/) (`mdi-headset`),
-  licensed under Apache-2.0. It is not the TeamSpeak logo.
+  licensed under Apache-2.0. They are not the TeamSpeak logo.
