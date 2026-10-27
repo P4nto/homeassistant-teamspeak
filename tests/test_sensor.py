@@ -10,7 +10,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.teamspeak.const import DOMAIN
 from custom_components.teamspeak.sensor import TeamspeakSensor
 
-from .const import SERVER_DATA
+from .const import CLIENTS_RAW, SERVER_DATA
 
 COORDINATOR_CLIENT = "custom_components.teamspeak.coordinator.TeamspeakApiClient"
 
@@ -34,13 +34,22 @@ async def test_sensor_state_and_attributes(hass):
         await hass.async_block_till_done()
 
         state = hass.states.get("sensor.test_server")
+        clients_state = hass.states.get("sensor.test_server_clients_online")
+        uptime_state = hass.states.get("sensor.test_server_uptime")
 
     assert state is not None
     assert state.state == "online"
     assert state.attributes["serverinfo"]["unique_identifier"] == "server-uuid"
-    assert state.attributes["clients"] == [{"client_nickname": "Alice"}]
+    assert state.attributes["clients"] == CLIENTS_RAW
     assert state.attributes["channels"] == [{"channel_name": "Lobby"}]
     assert state.attributes["attribution"]
+
+    assert clients_state is not None
+    assert clients_state.state == "2"
+    assert uptime_state is not None
+    assert uptime_state.state == "3600"
+    assert uptime_state.attributes["unit_of_measurement"] == "s"
+    assert uptime_state.attributes["device_class"] == "duration"
 
 
 def test_client_and_channel_attributes_are_not_recorded():

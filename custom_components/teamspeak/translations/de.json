@@ -27,5 +27,15 @@
     "abort": {
       "already_configured": "Dieser TeamSpeak-Server ist bereits eingerichtet."
     }
+  },
+  "entity": {
+    "sensor": {
+      "clients_online": {
+        "name": "Online-Clients"
+      },
+      "uptime": {
+        "name": "Laufzeit"
+      }
+    }
   }
 }

@@ -40,6 +40,7 @@ class TeamspeakServerInfo(TypedDict):
     maxclients: int | None
     reservedslots: int | None
     clientsonline: int | None
+    active_clients: int
     clientconnections: int | None
     channelsonline: int | None
     created: int | None
@@ -174,6 +175,9 @@ class TeamspeakApiClient:
             ) from err
 
         version = (serverinfo.get("virtualserver_version") or "").split(maxsplit=1)
+        active_clients = sum(
+            1 for client in clients if client.get("client_type") != "1"
+        )
 
         return {
             "clients": list(clients),
@@ -189,6 +193,7 @@ class TeamspeakApiClient:
                     serverinfo.get("virtualserver_reserved_slots")
                 ),
                 "clientsonline": _as_int(serverinfo.get("virtualserver_clientsonline")),
+                "active_clients": active_clients,
                 "clientconnections": _as_int(
                     serverinfo.get("virtualserver_client_connections")
                 ),

@@ -30,10 +30,17 @@ cannot encrypt this connection.
 
 Platform | Description
 -- | --
-`sensor` | Shows the status and details of the configured TeamSpeak 3 Server.
+`sensor` | Shows the status, client count and uptime of the configured TeamSpeak 3 Server.
 
-The sensor state is the virtual server status (for example `online`). The
-following information is available as attributes.
+The integration creates the following sensors:
+
+Sensor | Description
+-- | --
+Server status | Virtual server status (for example `online`)
+Clients online | Number of active voice clients. ServerQuery connections such as `serveradmin` are not counted.
+Uptime | Seconds since the server started, displayed as a duration
+
+The server status sensor exposes the following information as attributes.
 
 ### Serverinfo
 
@@ -48,6 +55,7 @@ Attribute | Description
 `maxclients` | Maximum number of simultaneous client connections
 `reservedslots` | Number of reserved slots
 `clientsonline` | Number of connections (including ServerQuery clients)
+`active_clients` | Number of active voice clients (excluding ServerQuery clients)
 `clientconnections` | Number of connected clients
 `channelsonline` | Number of available channels
 `created` | Unix timestamp of the server creation date

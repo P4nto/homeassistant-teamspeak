@@ -14,7 +14,7 @@ from custom_components.teamspeak.api import (
     TeamspeakApiClientCommunicationError,
 )
 
-from .const import SERVER_INFO_RAW
+from .const import CLIENTS_RAW, SERVER_INFO_RAW
 
 TS3_CONNECTION = "custom_components.teamspeak.api.ts3.query.TS3Connection"
 
@@ -22,7 +22,7 @@ TS3_CONNECTION = "custom_components.teamspeak.api.ts3.query.TS3Connection"
 def _session() -> MagicMock:
     session = MagicMock()
     session.serverinfo.return_value.parsed = [SERVER_INFO_RAW]
-    session.clientlist.return_value.parsed = [{"client_nickname": "Alice"}]
+    session.clientlist.return_value.parsed = CLIENTS_RAW
     session.channellist.return_value.parsed = [{"channel_name": "Lobby"}]
     return session
 
@@ -49,7 +49,9 @@ def test_get_data() -> None:
     assert data["serverinfo"]["port"] == 9987
     assert data["serverinfo"]["version"] == "3.13.7"
     assert data["serverinfo"]["maxclients"] == 32
-    assert data["clients"] == [{"client_nickname": "Alice"}]
+    assert data["serverinfo"]["clientsonline"] == 3
+    assert data["serverinfo"]["active_clients"] == 2
+    assert data["clients"] == CLIENTS_RAW
     assert data["channels"] == [{"channel_name": "Lobby"}]
 
 
@@ -65,6 +67,21 @@ def test_get_data_without_version() -> None:
         data = client.get_data()
 
     assert data["serverinfo"]["version"] is None
+
+
+def test_active_clients_ignores_query_clients() -> None:
+    """Test that query clients are not counted as active clients."""
+    session = _session()
+    session.clientlist.return_value.parsed = [
+        {"client_nickname": "serveradmin", "client_type": "1"},
+        {"client_nickname": "Alice"},
+    ]
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        data = client.get_data()
+
+    assert data["serverinfo"]["active_clients"] == 1
 
 
 def test_authentication_error() -> None:

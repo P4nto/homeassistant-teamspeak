@@ -26,8 +26,14 @@ SERVER_INFO_RAW = {
     "virtualserver_uptime": "3600",
 }
 
+CLIENTS_RAW = [
+    {"client_nickname": "serveradmin", "client_type": "1"},
+    {"client_nickname": "Alice", "client_type": "0"},
+    {"client_nickname": "Bob", "client_type": "0"},
+]
+
 SERVER_DATA: TeamspeakData = {
-    "clients": [{"client_nickname": "Alice"}],
+    "clients": CLIENTS_RAW,
     "serverinfo": {
         "unique_identifier": "server-uuid",
         "status": "online",
@@ -38,6 +44,7 @@ SERVER_DATA: TeamspeakData = {
         "maxclients": 32,
         "reservedslots": 0,
         "clientsonline": 3,
+        "active_clients": 2,
         "clientconnections": 2,
         "channelsonline": 4,
         "created": 1700000000,

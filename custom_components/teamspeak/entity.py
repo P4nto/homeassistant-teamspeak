@@ -15,12 +15,18 @@ class TeamspeakEntity(CoordinatorEntity[TeamspeakDataUpdateCoordinator]):
 
     _attr_attribution = ATTRIBUTION
     _attr_has_entity_name = True
-    _attr_name = None
 
-    def __init__(self, coordinator: TeamspeakDataUpdateCoordinator) -> None:
+    def __init__(
+        self,
+        coordinator: TeamspeakDataUpdateCoordinator,
+        unique_id_suffix: str | None = None,
+    ) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
-        self._attr_unique_id = coordinator.config_entry.entry_id
+        unique_id = coordinator.config_entry.entry_id
+        if unique_id_suffix:
+            unique_id = f"{unique_id}_{unique_id_suffix}"
+        self._attr_unique_id = unique_id
 
     @property
     def device_info(self) -> DeviceInfo:

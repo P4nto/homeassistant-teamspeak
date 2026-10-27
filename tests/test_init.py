@@ -27,9 +27,11 @@ async def test_setup_and_unload(hass):
 
         assert entry.runtime_data is not None
         states = hass.states.async_all("sensor")
-        assert len(states) == 1
-        assert states[0].state == "online"
-        assert states[0].attributes["serverinfo"]["name"] == "Test Server"
+        assert len(states) == 3
+        status = hass.states.get("sensor.test_server")
+        assert status is not None
+        assert status.state == "online"
+        assert status.attributes["serverinfo"]["name"] == "Test Server"
 
         assert await hass.config_entries.async_unload(entry.entry_id)
         await hass.async_block_till_done()
