@@ -1,5 +1,4 @@
-[![Pipeline](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/badges/master/pipeline.svg)](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/pipelines)
-[![Latest release](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/badges/release.svg)](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/releases)
+[![Latest release](https://img.shields.io/github/v/release/P4nto/homeassistant-teamspeak?style=for-the-badge)](https://github.com/P4nto/homeassistant-teamspeak/releases)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 _Component to integrate a [TeamSpeak 3 Server](https://www.teamspeak.com/en/) with Home Assistant._
@@ -7,8 +6,7 @@ _Component to integrate a [TeamSpeak 3 Server](https://www.teamspeak.com/en/) wi
 _DISCLAIMER: This project is a private open source project and is not affiliated with TeamSpeak Systems, Inc._
 
 > This repository is a fork of [Larsiiii/homeassistant-teamspeak](https://github.com/Larsiiii/homeassistant-teamspeak),
-> maintained at [gitlab.p4nto.de](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak)
-> and mirrored to [GitHub](https://github.com/P4nto/homeassistant-teamspeak) for HACS.
+> available on [GitHub](https://github.com/P4nto/homeassistant-teamspeak) for HACS.
 > The original work is licensed under the MIT License.
 
 ## Requirements
@@ -70,9 +68,9 @@ lists; they remain available in the current entity state.
 
 ## Installation
 
-The GitLab repository is mirrored to GitHub for HACS. Use the GitHub repository
-URL as a custom integration repository. Manual installation from GitLab is also
-supported.
+Add this repository as a custom integration repository in HACS, or install
+manually by copying `custom_components/teamspeak/` into your Home Assistant
+installation.
 
 ### HACS
 
@@ -84,8 +82,8 @@ supported.
 
 ### Manual
 
-1. Download the latest `teamspeak-*.zip` from the
-   [GitLab releases page](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/releases),
+1. Download the latest release from the
+   [GitHub releases page](https://github.com/P4nto/homeassistant-teamspeak/releases),
    or copy the files from `custom_components/teamspeak/` in this repository.
 2. Place the `teamspeak` directory in your Home Assistant
    `custom_components` directory.
@@ -151,7 +149,7 @@ dependencies. See [.devcontainer/README.md](.devcontainer/README.md) for
 details.
 
 ```bash
-git clone https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak.git
+git clone https://github.com/P4nto/homeassistant-teamspeak.git
 cd homeassistant-teamspeak
 code .
 ```
@@ -169,8 +167,7 @@ Useful commands:
 .venv/bin/hass -c .devcontainer --script check_config
 ```
 
-The GitLab pipeline runs Ruff, the PHCC test suite, Hassfest and a release job
-on version tags.
+Development checks: Ruff, pytest and Hassfest.
 
 ## Contributions
 
