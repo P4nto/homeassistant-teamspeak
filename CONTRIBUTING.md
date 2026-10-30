@@ -7,9 +7,9 @@ Contributing to this project should be as easy and transparent as possible, whet
 - Submitting a fix
 - Proposing new features
 
-## GitLab is used for everything
+## GitHub is used for everything
 
-GitLab is used to host code, to track issues and feature requests, as well as accept merge requests.
+GitHub is used to host code, to track issues and feature requests, as well as accept merge requests.
 
 Merge requests are the best way to propose changes to the codebase.
 
@@ -29,16 +29,16 @@ The project uses [Ruff](https://docs.astral.sh/ruff/) and
 .venv/bin/pytest
 ```
 
-The GitLab pipeline runs the same checks plus Hassfest.
+The GitHub pipeline runs the same checks plus Hassfest.
 
 ## Any contributions you make will be under the MIT Software License
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
 
-## Report bugs using GitLab [issues](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/issues)
+## Report bugs using GitHub [issues](https://github.com/P4nto/homeassistant-teamspeak/issues)
 
-GitLab issues are used to track public bugs.
-Report a bug by [opening a new issue](https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak/-/issues/new); it's that easy!
+GitHub issues are used to track public bugs.
+Report a bug by [opening a new issue](https://github.com/P4nto/homeassistant-teamspeak/issues); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
 
