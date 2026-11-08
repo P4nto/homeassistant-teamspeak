@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.teamspeak.api import TeamspeakApiClientCommunicationError
 from custom_components.teamspeak.const import DOMAIN

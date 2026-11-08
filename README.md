@@ -6,12 +6,13 @@ _Component to integrate a [TeamSpeak 3 Server](https://www.teamspeak.com/en/) wi
 _DISCLAIMER: This project is a private open source project and is not affiliated with TeamSpeak Systems, Inc._
 
 > This repository is a fork of [Larsiiii/homeassistant-teamspeak](https://github.com/Larsiiii/homeassistant-teamspeak),
-> available on [GitHub](https://github.com/P4nto/homeassistant-teamspeak) for HACS.
+> available on [GitHub](https://github.com/P4nto/homeassistant-teamspeak) for the Home Assistant
+> Marketplace (formerly HACS).
 > The original work is licensed under the MIT License.
 
 ## Requirements
 
-- Home Assistant **2026.10** or newer
+- Home Assistant **2026.11** or newer
 - Python **3.14** (provided by Home Assistant)
 - A reachable TeamSpeak 3 Server with the ServerQuery interface on port **10011**
 - A ServerQuery account with permission to query the virtual server
@@ -68,17 +69,24 @@ lists; they remain available in the current entity state.
 
 ## Installation
 
-Add this repository as a custom integration repository in HACS, or install
-manually by copying `custom_components/teamspeak/` into your Home Assistant
-installation.
+Add this repository as a custom integration repository in the Marketplace, or
+install manually by copying `custom_components/teamspeak/` into your Home
+Assistant installation.
 
-### HACS
+### Marketplace
 
-1. Open **HACS -> Integrations**.
-2. Open the three-dot menu and select **Custom repositories**.
-3. Add `https://github.com/P4nto/homeassistant-teamspeak` with category
+Home Assistant 2026.11 replaces HACS with the built-in Marketplace. Existing
+HACS repositories are migrated automatically when Home Assistant starts, so
+HACS no longer needs to be installed separately.
+
+1. Open **Settings -> Marketplace**.
+2. Select **Add from link** and enter
+   `https://github.com/P4nto/homeassistant-teamspeak` with category
    **Integration**.
-4. Search for **Teamspeak 3 Server**, install it and restart Home Assistant.
+3. Search for **Teamspeak 3 Server**, install it and restart Home Assistant.
+
+Adding a custom repository requires a GitHub connection. The Marketplace
+only reads public repository information.
 
 ### Manual
 
@@ -144,7 +152,7 @@ flow. The sensor becomes unavailable while the server cannot be queried.
 ## Local development
 
 The repository includes a Visual Studio Code devcontainer with Python 3.14,
-Home Assistant 2026.10.3, the integration dependencies, Ruff and the test
+Home Assistant 2026.11.0, the integration dependencies, Ruff and the test
 dependencies. See [.devcontainer/README.md](.devcontainer/README.md) for
 details.
 

@@ -1,7 +1,7 @@
 # Developing with Visual Studio Code and devcontainers
 
 The devcontainer provides a Python 3.14 environment with Home Assistant
-2026.10.3, the integration dependencies, Ruff and the test dependencies.
+2026.11.0, the integration dependencies, Ruff and the test dependencies.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ Task | Description
 Run Home Assistant on port 9123 | Start Home Assistant with the integration and the configuration in `.devcontainer/configuration.yaml`.
 Check Home Assistant configuration | Validate the Home Assistant configuration.
 Lint integration | Run Ruff against the repository.
-Run tests | Run the PHCC test suite.
+Run tests | Run the pytest-homeassistant test suite.
 
 Home Assistant is available at <http://localhost:9123>.
 

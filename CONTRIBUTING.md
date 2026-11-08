@@ -21,7 +21,7 @@ Merge requests are the best way to propose changes to the codebase.
 ## Development checks
 
 The project uses [Ruff](https://docs.astral.sh/ruff/) and
-[pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component).
+[pytest-homeassistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-homeassistant).
 
 ```bash
 .venv/bin/ruff check .
