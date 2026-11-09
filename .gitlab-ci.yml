@@ -69,7 +69,7 @@ test:
 hassfest:
   stage: validate
   image:
-    name: "ghcr.io/home-assistant/hassfest"
+    name: "ghcr.io/home-assistant/hassfest:2026.11.0"
     entrypoint: [""]
   script:
     - /usr/src/homeassistant/script/hassfest/docker/entrypoint.sh
