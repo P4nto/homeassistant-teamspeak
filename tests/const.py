@@ -1,10 +1,17 @@
 """Shared test data for the Teamspeak 3 Server integration."""
 
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 
 from custom_components.teamspeak.api import TeamspeakData
 
 CONFIG_DATA = {
+    CONF_HOST: "127.0.0.1",
+    CONF_USERNAME: "serveradmin",
+    CONF_PASSWORD: "secret",
+    CONF_PORT: 10011,
+}
+
+CONFIG_DATA_WITHOUT_PORT = {
     CONF_HOST: "127.0.0.1",
     CONF_USERNAME: "serveradmin",
     CONF_PASSWORD: "secret",
@@ -51,4 +58,9 @@ SERVER_DATA: TeamspeakData = {
         "uptime": 3600,
     },
     "channels": [{"channel_name": "Lobby"}],
+}
+
+SERVER_DATA_WITHOUT_UNIQUE_ID: TeamspeakData = {
+    **SERVER_DATA,
+    "serverinfo": {**SERVER_DATA["serverinfo"], "unique_identifier": ""},
 }

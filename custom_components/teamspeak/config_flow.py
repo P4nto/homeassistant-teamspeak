@@ -7,7 +7,7 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
@@ -15,6 +15,7 @@ from homeassistant.helpers.selector import (
 )
 
 from .api import (
+    PORT,
     TeamspeakApiClient,
     TeamspeakApiClientAuthenticationError,
     TeamspeakApiClientCommunicationError,
@@ -38,9 +39,11 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
+            port = user_input.get(CONF_PORT, PORT)
             try:
                 data = await self._async_validate_input(
                     user_input[CONF_HOST],
+                    port,
                     user_input[CONF_USERNAME],
                     user_input[CONF_PASSWORD],
                 )
@@ -49,11 +52,13 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
             except TeamspeakApiClientCommunicationError:
                 errors["base"] = "cannot_connect"
             else:
-                await self.async_set_unique_id(data["serverinfo"]["unique_identifier"])
+                await self.async_set_unique_id(
+                    self._async_unique_id(data, user_input[CONF_HOST])
+                )
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
                     title=data["serverinfo"]["name"] or user_input[CONF_HOST],
-                    data=user_input,
+                    data={**user_input, CONF_PORT: port},
                 )
 
         return self.async_show_form(
@@ -80,6 +85,7 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
             try:
                 data = await self._async_validate_input(
                     reauth_entry.data[CONF_HOST],
+                    reauth_entry.data.get(CONF_PORT, PORT),
                     user_input[CONF_USERNAME],
                     user_input[CONF_PASSWORD],
                 )
@@ -88,7 +94,7 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
             except TeamspeakApiClientCommunicationError:
                 errors["base"] = "cannot_connect"
             else:
-                unique_id = data["serverinfo"]["unique_identifier"]
+                unique_id = self._async_unique_id(data, reauth_entry.data[CONF_HOST])
                 existing_entry = (
                     self.hass.config_entries.async_entry_for_domain_unique_id(
                         DOMAIN, unique_id
@@ -136,6 +142,10 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
                     CONF_HOST,
                     default=defaults.get(CONF_HOST, ""),
                 ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
+                vol.Optional(
+                    CONF_PORT,
+                    default=defaults.get(CONF_PORT, PORT),
+                ): vol.All(vol.Coerce(int), vol.Range(min=1, max=65535)),
                 vol.Required(
                     CONF_USERNAME,
                     default=defaults.get(CONF_USERNAME, DEFAULT_USERNAME),
@@ -146,18 +156,19 @@ class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
             }
         )
 
+    @staticmethod
+    def _async_unique_id(data: TeamspeakData, host: str) -> str:
+        """Return the server unique ID, falling back to the host."""
+        return data["serverinfo"]["unique_identifier"] or host.strip().lower()
+
     async def _async_validate_input(
-        self, host: str, username: str, password: str
+        self, host: str, port: int, username: str, password: str
     ) -> TeamspeakData:
         """Validate the credentials and return the server data."""
-        client = TeamspeakApiClient(host, username, password)
+        client = TeamspeakApiClient(host, username, password, port=port)
         try:
             data = await self.hass.async_add_executor_job(client.get_data)
         finally:
             await self.hass.async_add_executor_job(client.close)
 
-        if not data["serverinfo"]["unique_identifier"]:
-            raise TeamspeakApiClientCommunicationError(
-                "The TeamSpeak server did not return a unique identifier"
-            )
         return data
