@@ -7,6 +7,7 @@
         "description": "Richte deinen TeamSpeak-3-Server ein. Verwende ein ServerQuery-Konto; die Zugangsdaten stehen nach dem ersten Start im Server-Log. Dokumentation: {documentation_url}",
         "data": {
           "host": "Host",
+          "port": "Port",
           "username": "Benutzername",
           "password": "Passwort"
         }

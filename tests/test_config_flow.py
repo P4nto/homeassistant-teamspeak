@@ -5,7 +5,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant.common import MockConfigEntry
 
@@ -15,7 +15,12 @@ from custom_components.teamspeak.api import (
 )
 from custom_components.teamspeak.const import DOMAIN
 
-from .const import CONFIG_DATA, SERVER_DATA
+from .const import (
+    CONFIG_DATA,
+    CONFIG_DATA_WITHOUT_PORT,
+    SERVER_DATA,
+    SERVER_DATA_WITHOUT_UNIQUE_ID,
+)
 
 CONFIG_FLOW_CLIENT = "custom_components.teamspeak.config_flow.TeamspeakApiClient"
 COORDINATOR_CLIENT = "custom_components.teamspeak.coordinator.TeamspeakApiClient"
@@ -43,7 +48,78 @@ async def test_user_flow(hass):
     assert result["title"] == "Test Server"
     assert result["data"] == CONFIG_DATA
     assert result["result"].unique_id == "server-uuid"
+    client_class.assert_called_once_with(
+        "127.0.0.1", "serveradmin", "secret", port=10011
+    )
     client_class.return_value.close.assert_called_once()
+
+
+async def test_user_flow_custom_port(hass):
+    """Test that a custom ServerQuery port is stored and used."""
+    with (
+        patch(CONFIG_FLOW_CLIENT) as client_class,
+        patch(COORDINATOR_CLIENT) as coordinator_client_class,
+    ):
+        client_class.return_value.get_data.return_value = SERVER_DATA
+        coordinator_client_class.return_value.get_data.return_value = SERVER_DATA
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], {**CONFIG_DATA, CONF_PORT: "10012"}
+        )
+        await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"][CONF_PORT] == 10012
+    client_class.assert_called_once_with(
+        "127.0.0.1", "serveradmin", "secret", port=10012
+    )
+
+
+async def test_user_flow_defaults_port(hass):
+    """Test that entries without a port use the ServerQuery default."""
+    with (
+        patch(CONFIG_FLOW_CLIENT) as client_class,
+        patch(COORDINATOR_CLIENT) as coordinator_client_class,
+    ):
+        client_class.return_value.get_data.return_value = SERVER_DATA
+        coordinator_client_class.return_value.get_data.return_value = SERVER_DATA
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], CONFIG_DATA_WITHOUT_PORT
+        )
+        await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"][CONF_PORT] == 10011
+    client_class.assert_called_once_with(
+        "127.0.0.1", "serveradmin", "secret", port=10011
+    )
+
+
+async def test_user_flow_without_unique_identifier_uses_host(hass):
+    """Test setup of a server that returns no unique identifier."""
+    with (
+        patch(CONFIG_FLOW_CLIENT) as client_class,
+        patch(COORDINATOR_CLIENT) as coordinator_client_class,
+    ):
+        client_class.return_value.get_data.return_value = SERVER_DATA_WITHOUT_UNIQUE_ID
+        coordinator_client_class.return_value.get_data.return_value = (
+            SERVER_DATA_WITHOUT_UNIQUE_ID
+        )
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], CONFIG_DATA
+        )
+        await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["result"].unique_id == "127.0.0.1"
 
 
 async def test_user_flow_authentication_error(hass):
@@ -140,6 +216,9 @@ async def test_reauth_flow(hass):
     assert entry.unique_id == "server-uuid"
     assert entry.data[CONF_USERNAME] == "new-user"
     assert entry.data[CONF_PASSWORD] == "new-password"
+    flow_client_class.assert_called_once_with(
+        "127.0.0.1", "new-user", "new-password", port=10011
+    )
 
 
 async def test_reauth_flow_aborts_on_unique_id_collision(hass):
@@ -259,5 +338,6 @@ async def test_user_flow_host_and_password(hass):
 
     schema = result["data_schema"].schema
     assert CONF_HOST in schema
+    assert CONF_PORT in schema
     assert CONF_USERNAME in schema
     assert CONF_PASSWORD in schema

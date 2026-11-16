@@ -7,9 +7,12 @@ Contributing to this project should be as easy and transparent as possible, whet
 - Submitting a fix
 - Proposing new features
 
-## GitHub is used for everything
+## GitLab is used for development
 
-GitHub is used to host code, to track issues and feature requests, as well as accept merge requests.
+GitLab is used to host code and to track issues, feature requests and merge
+requests. `master` and every release are mirrored to
+[GitHub](https://github.com/P4nto/homeassistant-teamspeak) for the Home
+Assistant Marketplace (formerly HACS).
 
 Merge requests are the best way to propose changes to the codebase.
 
@@ -29,7 +32,29 @@ The project uses [Ruff](https://docs.astral.sh/ruff/) and
 .venv/bin/pytest
 ```
 
-The GitHub pipeline runs the same checks plus Hassfest.
+The GitLab pipeline runs the same checks plus Hassfest.
+
+## Release process
+
+Releases are built by GitLab CI and mirrored to GitHub for the Marketplace.
+
+1. Bump `version` in `custom_components/teamspeak/manifest.json` on a feature
+   branch and merge it into `master`.
+2. Create an annotated tag **on the merge commit that contains the version
+   bump** and push it:
+
+   ```bash
+   git tag -a v0.5.3 -m "Teamspeak 3 Server v0.5.3"
+   git push origin v0.5.3
+   ```
+
+3. The tag pipeline verifies that the tag matches the manifest version, creates
+   the GitLab release with the integration archive and mirrors the tag and
+   release to GitHub.
+
+The `check-version` job fails the pipeline if the tag and `manifest.json`
+differ, and both release jobs depend on it. Never tag a commit before its
+version bump is merged.
 
 ## Any contributions you make will be under the MIT Software License
 

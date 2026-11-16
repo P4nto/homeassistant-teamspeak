@@ -6,12 +6,13 @@ import logging
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import (
+    PORT,
     TeamspeakApiClient,
     TeamspeakApiClientAuthenticationError,
     TeamspeakApiClientError,
@@ -35,6 +36,7 @@ class TeamspeakDataUpdateCoordinator(DataUpdateCoordinator[TeamspeakData]):
             config_entry.data[CONF_HOST],
             config_entry.data[CONF_USERNAME],
             config_entry.data[CONF_PASSWORD],
+            port=config_entry.data.get(CONF_PORT, PORT),
         )
         super().__init__(
             hass,

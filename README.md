@@ -14,13 +14,13 @@ _DISCLAIMER: This project is a private open source project and is not affiliated
 
 - Home Assistant **2026.11** or newer
 - Python **3.14** (provided by Home Assistant)
-- A reachable TeamSpeak 3 Server with the ServerQuery interface on port **10011**
+- A reachable TeamSpeak 3 Server with the ServerQuery interface (default port **10011**, configurable during setup)
 - A ServerQuery account with permission to query the virtual server
 
 ## Security
 
 TeamSpeak's ServerQuery protocol uses an **unencrypted Telnet connection** on
-port `10011`. Do not expose this port to the internet. Restrict it to Home
+port `10011` by default. Do not expose this port to the internet. Restrict it to Home
 Assistant, your local network or a VPN, and use a dedicated ServerQuery account
 with only the permissions required to query the virtual server. The integration
 cannot encrypt this connection.
