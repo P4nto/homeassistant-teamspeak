@@ -118,6 +118,7 @@ create-release:
     - test
     - hassfest
     - check-version
+    - release-preflight
   rules:
     - if: '$CI_COMMIT_TAG =~ /^\d+\.\d+\.\d+$/'
   before_script:

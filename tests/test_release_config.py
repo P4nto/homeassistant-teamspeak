@@ -21,6 +21,12 @@ def test_release_rules_accept_only_plain_semver() -> None:
         assert PLAIN_TAG_RULE in _rule_conditions(job_name), job_name
 
 
+def test_preflight_blocks_release_creation() -> None:
+    """A failed preflight must prevent the GitLab release."""
+    needs = yaml.safe_load(CI_FILE.read_text())["create-release"]["needs"]
+    assert "release-preflight" in needs
+
+
 def test_ci_has_no_legacy_tag_stripping() -> None:
     """The legacy v-prefix and tag stripping must be gone."""
     text = CI_FILE.read_text()
