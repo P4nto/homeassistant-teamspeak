@@ -10,6 +10,8 @@ _DISCLAIMER: This project is a private open source project and is not affiliated
 > Marketplace (formerly HACS).
 > The original work is licensed under the MIT License.
 
+Release notes are listed in [CHANGELOG.md](CHANGELOG.md).
+
 ## Requirements
 
 - Home Assistant **2026.11** or newer
@@ -37,7 +39,7 @@ Sensor | Description
 -- | --
 Server status | Virtual server status (for example `online`)
 Clients online | Number of active voice clients. ServerQuery connections such as `serveradmin` are not counted.
-Uptime | Uptime in days, hours and minutes, localized to the Home Assistant language
+Uptime | Uptime in days, hours and minutes; German and English labels are built in
 
 The server status sensor exposes the following information as attributes.
 
@@ -83,7 +85,8 @@ HACS no longer needs to be installed separately.
 2. Select **Add from link** and enter
    `https://github.com/P4nto/homeassistant-teamspeak` with category
    **Integration**.
-3. Search for **Teamspeak 3 Server**, install it and restart Home Assistant.
+3. Search for **Teamspeak 3 Server** and install it. Home Assistant opens the
+   setup flow directly; a restart is only needed after a manual update.
 
 Adding a custom repository requires a GitHub connection. The Marketplace
 only reads public repository information.
@@ -132,7 +135,8 @@ Configuration is done in the UI:
 
 1. Go to **Settings -> Devices & services -> Add integration** and search for
    **Teamspeak 3 Server**.
-2. Enter the host and the ServerQuery credentials.
+2. Enter the host, the ServerQuery port (default `10011`) and the ServerQuery
+   credentials.
 3. The generated credentials for the ServerQuery admin account are shown in the
    TeamSpeak server log after the first start. The values below are
    placeholders; use the values from your own server log:

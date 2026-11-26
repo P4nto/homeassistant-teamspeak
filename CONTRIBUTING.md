@@ -9,10 +9,10 @@ Contributing to this project should be as easy and transparent as possible, whet
 
 ## GitLab is used for development
 
-GitLab is used to host code and to track issues, feature requests and merge
-requests. `master` and every release are mirrored to
-[GitHub](https://github.com/P4nto/homeassistant-teamspeak) for the Home
-Assistant Marketplace (formerly HACS).
+GitLab hosts the code, merge requests and internal planning. Public bug
+reports and feature requests use GitHub issues. `master` and every release are
+mirrored to [GitHub](https://github.com/P4nto/homeassistant-teamspeak) for the
+Home Assistant Marketplace (formerly HACS).
 
 Merge requests are the best way to propose changes to the codebase.
 
@@ -37,6 +37,9 @@ The GitLab pipeline runs the same checks plus Hassfest.
 ## Release process
 
 Releases are built by GitLab CI and mirrored to GitHub for the Marketplace.
+Tags use the plain format `X.Y.Z` and must match
+`custom_components/teamspeak/manifest.json` exactly. The old `v`-prefixed tags
+are historical; `v0.5.2` is obsolete and points at the wrong commit.
 
 1. Bump `version` in `custom_components/teamspeak/manifest.json` on a feature
    branch and merge it into `master`.
@@ -44,23 +47,27 @@ Releases are built by GitLab CI and mirrored to GitHub for the Marketplace.
    bump** and push it:
 
    ```bash
-   git tag -a v0.5.3 -m "Teamspeak 3 Server v0.5.3"
-   git push origin v0.5.3
+   git tag -a 0.5.3 -m "Teamspeak 3 Server 0.5.3"
+   git push origin 0.5.3
    ```
 
-3. The tag pipeline verifies that the tag matches the manifest version, creates
-   the GitLab release with the integration archive and mirrors the tag and
-   release to GitHub.
+3. Protect the tag in GitLab **before starting the pipeline**. `GITHUB_TOKEN` is
+   a protected CI variable and is only available on protected refs. If the
+   pipeline was already started, start a new pipeline for the tag after
+   protecting it; retrying the old pipeline will not inject the token.
+4. The tag pipeline checks the tag, manifest and release variables, creates the
+   GitLab release with the integration archive and mirrors the tag and release
+   to GitHub.
 
-The `check-version` job fails the pipeline if the tag and `manifest.json`
-differ, and both release jobs depend on it. Never tag a commit before its
-version bump is merged.
+`check-version` fails if the tag and `manifest.json` differ. `release-preflight`
+fails if the release variables are missing or the token is unavailable because
+the tag was not protected. Never tag a commit before its version bump is merged.
 
 ## Any contributions you make will be under the MIT Software License
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
 
-## Report bugs using GitHub [issues](https://github.com/P4nto/homeassistant-teamspeak/issues)
+## Report bugs using GitHub issues
 
 GitHub issues are used to track public bugs.
 Report a bug by [opening a new issue](https://github.com/P4nto/homeassistant-teamspeak/issues); it's that easy!

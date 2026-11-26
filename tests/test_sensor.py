@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.teamspeak.const import DOMAIN
-from custom_components.teamspeak.sensor import TeamspeakSensor, _format_uptime
+from custom_components.teamspeak.sensor import (
+    TeamspeakSensor,
+    TeamspeakUptimeSensor,
+    _format_uptime,
+)
 
 from .const import CLIENTS_RAW, SERVER_DATA
 
@@ -34,11 +39,14 @@ async def test_sensor_state_and_attributes(hass):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
 
-        state = hass.states.get("sensor.test_server")
+        state = hass.states.get("sensor.test_server_status")
         clients_state = hass.states.get("sensor.test_server_clients_online")
         uptime_state = hass.states.get("sensor.test_server_uptime")
 
     assert state is not None
+    assert state.entity_id == "sensor.test_server_status"
+    assert state.attributes["friendly_name"] == "Test Server Status"
+    assert er.async_get(hass).async_get(state.entity_id).unique_id == entry.entry_id
     assert state.state == "online"
     assert state.attributes["serverinfo"]["unique_identifier"] == "server-uuid"
     assert state.attributes["clients"] == CLIENTS_RAW
@@ -74,3 +82,11 @@ def test_format_uptime(seconds, language, expected):
 def test_client_and_channel_attributes_are_not_recorded():
     """Test that large client and channel lists stay out of history."""
     assert TeamspeakSensor._unrecorded_attributes == frozenset({"clients", "channels"})
+
+
+def test_uptime_missing_returns_none():
+    """Test that a server without uptime does not produce an invalid sensor state."""
+    coordinator = MagicMock()
+    coordinator.data = {"serverinfo": {"uptime": None}}
+
+    assert TeamspeakUptimeSensor(coordinator).native_value is None

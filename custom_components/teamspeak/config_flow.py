@@ -24,7 +24,7 @@ from .api import (
 from .const import DOMAIN
 
 DEFAULT_USERNAME = "serveradmin"
-DESCRIPTION_URL = "https://gitlab.p4nto.de/p4nto/homeassistant-teamspeak"
+DESCRIPTION_URL = "https://github.com/P4nto/homeassistant-teamspeak#readme"
 
 
 class TeamspeakFlowHandler(ConfigFlow, domain=DOMAIN):
