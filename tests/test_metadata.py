@@ -30,6 +30,13 @@ def test_contributing_separates_github_and_gitlab() -> None:
     assert "GitLab is used to host code and to track issues" not in text
 
 
+def test_contributing_marks_v052_as_removed() -> None:
+    """The deleted v0.5.2 tag must not be described as still present."""
+    text = Path("CONTRIBUTING.md").read_text()
+    assert "points at the wrong commit" not in text
+    assert "`v0.5.2` tag was removed" in text
+
+
 def test_readme_documents_query_port() -> None:
     """The configurable ServerQuery port must appear in setup instructions."""
     text = Path("README.md").read_text()

@@ -39,7 +39,7 @@ The GitLab pipeline runs the same checks plus Hassfest.
 Releases are built by GitLab CI and mirrored to GitHub for the Marketplace.
 Tags use the plain format `X.Y.Z` and must match
 `custom_components/teamspeak/manifest.json` exactly. The old `v`-prefixed tags
-are historical; `v0.5.2` is obsolete and points at the wrong commit.
+are historical; the obsolete `v0.5.2` tag was removed.
 
 1. Bump `version` in `custom_components/teamspeak/manifest.json` on a feature
    branch and merge it into `master`.
