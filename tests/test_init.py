@@ -78,6 +78,26 @@ async def test_setup_defaults_port_for_existing_entries(hass):
     )
 
 
+async def test_setup_closes_session_when_platform_setup_fails(hass):
+    """A failed platform setup must not leak the ServerQuery session."""
+    entry = MockConfigEntry(domain=DOMAIN, data=CONFIG_DATA)
+    entry.add_to_hass(hass)
+
+    with (
+        patch(COORDINATOR_CLIENT) as client_class,
+        patch.object(
+            hass.config_entries,
+            "async_forward_entry_setups",
+            side_effect=RuntimeError("platform failed"),
+        ),
+    ):
+        client_class.return_value.get_data.return_value = SERVER_DATA
+        assert not await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    client_class.return_value.close.assert_called_once()
+
+
 async def test_setup_connection_error(hass):
     """Test setup when the server cannot be reached."""
     entry = MockConfigEntry(domain=DOMAIN, data=CONFIG_DATA)

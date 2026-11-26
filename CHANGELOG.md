@@ -11,6 +11,23 @@ GitHub. Earlier releases are listed on the
 and the
 [GitHub releases page](https://github.com/P4nto/homeassistant-teamspeak/releases).
 
+## [0.5.3] - 2026-11-26
+
+### Changed
+
+- Release pipelines fail before publishing when the preflight checks do not pass.
+- GitHub mirroring no longer force-pushes and reads the release notes before
+  pushing a tag.
+- Documentation describes the removed `v0.5.2` tag correctly.
+
+### Fixed
+
+- Malformed ServerQuery error responses no longer surface as unexpected errors
+  during setup, reauthentication or coordinator updates.
+- Non-string `virtualserver_version` values are normalized without raising.
+- A failed platform setup closes the ServerQuery session instead of leaving it
+  open until Home Assistant restarts.
+
 ## [0.5.2] - 2026-11-26
 
 ### Added

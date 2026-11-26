@@ -33,6 +33,14 @@ def _query_error(error_id: str) -> ts3.query.TS3QueryError:
     return ts3.query.TS3QueryError(response)
 
 
+class _BrokenErrorResponse:
+    """A response whose error field fails while being parsed."""
+
+    @property
+    def error(self) -> dict[str, str]:
+        raise ValueError("malformed error")
+
+
 def test_get_data() -> None:
     """Test fetching and normalizing server data."""
     session = _session()
@@ -54,6 +62,38 @@ def test_get_data() -> None:
     assert data["serverinfo"]["active_clients"] == 2
     assert data["clients"] == CLIENTS_RAW
     assert data["channels"] == [{"channel_name": "Lobby"}]
+
+
+@pytest.mark.parametrize(
+    "response", [SimpleNamespace(), _BrokenErrorResponse()], ids=["missing", "parser"]
+)
+def test_malformed_query_error_becomes_communication_error(response) -> None:
+    """A malformed ServerQuery error must not escape from the error handler."""
+    session = _session()
+    session.login.side_effect = ts3.query.TS3QueryError(response)
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "wrong")
+        with pytest.raises(
+            TeamspeakApiClientCommunicationError, match="malformed ServerQuery error"
+        ):
+            client.get_data()
+
+    session.close.assert_called_once()
+
+
+def test_get_data_with_non_string_version() -> None:
+    """A non-string version value must not break normalization."""
+    session = _session()
+    serverinfo = dict(SERVER_INFO_RAW)
+    serverinfo["virtualserver_version"] = 3137
+    session.serverinfo.return_value.parsed = [serverinfo]
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        data = client.get_data()
+
+    assert data["serverinfo"]["version"] == "3137"
 
 
 def test_get_data_without_version() -> None:

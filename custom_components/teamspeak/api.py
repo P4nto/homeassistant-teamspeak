@@ -67,7 +67,21 @@ def _as_int(value: str | None) -> int | None:
 
 def _is_auth_error(error: ts3.query.TS3QueryError) -> bool:
     """Return whether a ServerQuery error is an authentication error."""
-    return str(error.resp.error.get("id")) in _AUTH_ERROR_IDS
+    try:
+        response = getattr(error, "resp", None)
+        error_obj = getattr(response, "error", None)
+        error_id = error_obj.get("id") if hasattr(error_obj, "get") else None
+    except Exception:
+        return False
+    return str(error_id) in _AUTH_ERROR_IDS
+
+
+def _error_message(error: ts3.query.TS3QueryError) -> str:
+    """Render a ServerQuery error even when its response is malformed."""
+    try:
+        return str(error)
+    except Exception:
+        return "malformed ServerQuery error"
 
 
 def _close_session(session: ts3.query.TS3Connection) -> None:
@@ -111,7 +125,7 @@ class TeamspeakApiClient:
                     "The TeamSpeak ServerQuery credentials were rejected"
                 ) from err
             raise TeamspeakApiClientCommunicationError(
-                f"TeamSpeak ServerQuery error: {err}"
+                f"TeamSpeak ServerQuery error: {_error_message(err)}"
             ) from err
         except (OSError, TimeoutError, ts3.query.TS3RecvError) as err:
             _close_session(session)
@@ -150,7 +164,7 @@ class TeamspeakApiClient:
                     "The TeamSpeak ServerQuery credentials were rejected"
                 ) from err
             raise TeamspeakApiClientCommunicationError(
-                f"TeamSpeak ServerQuery error: {err}"
+                f"TeamSpeak ServerQuery error: {_error_message(err)}"
             ) from err
         except (
             IndexError,
@@ -174,7 +188,7 @@ class TeamspeakApiClient:
                 f"Unexpected error while reading data from the TeamSpeak server: {err}"
             ) from err
 
-        version = (serverinfo.get("virtualserver_version") or "").split(maxsplit=1)
+        version = str(serverinfo.get("virtualserver_version") or "").split(maxsplit=1)
         active_clients = sum(
             1 for client in clients if client.get("client_type") != "1"
         )
