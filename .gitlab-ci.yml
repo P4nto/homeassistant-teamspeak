@@ -24,6 +24,10 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHON_IMAGE: "python:3.14-bookworm"
+  # Ziel des HACS-Mirrors. Ohne diesen Wert bricht mirror-github mit
+  # "GITHUB_REPOSITORY is required" ab. GITHUB_TOKEN bleibt eine geschuetzte
+  # CI-Variable und steht nicht im Repo.
+  GITHUB_REPOSITORY: "P4nto/homeassistant-teamspeak"
 
 default:
   interruptible: true
