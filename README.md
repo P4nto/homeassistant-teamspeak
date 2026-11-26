@@ -10,6 +10,8 @@ _DISCLAIMER: This project is a private open source project and is not affiliated
 > Marketplace (formerly HACS).
 > The original work is licensed under the MIT License.
 
+Release notes are listed in [CHANGELOG.md](CHANGELOG.md).
+
 ## Requirements
 
 - Home Assistant **2026.11** or newer
