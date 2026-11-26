@@ -12,6 +12,7 @@ from custom_components.teamspeak.api import (
     TeamspeakApiClient,
     TeamspeakApiClientAuthenticationError,
     TeamspeakApiClientCommunicationError,
+    _as_int,
 )
 
 from .const import CLIENTS_RAW, SERVER_INFO_RAW
@@ -144,6 +145,80 @@ def test_unexpected_data_error_closes_session() -> None:
     with patch(TS3_CONNECTION, return_value=session):
         client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
         with pytest.raises(TeamspeakApiClientCommunicationError):
+            client.get_data()
+
+    session.quit.assert_called_once()
+
+
+def test_as_int_handles_none_and_invalid_values() -> None:
+    """Test that malformed ServerQuery numbers become None."""
+    assert _as_int(None) is None
+    assert _as_int("42") == 42
+    assert _as_int("not-a-number") is None
+
+
+def test_login_query_error_closes_session() -> None:
+    """Test that a non-auth login error closes the new session."""
+    session = _session()
+    session.login.side_effect = _query_error("1793")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        with pytest.raises(TeamspeakApiClientCommunicationError):
+            client.get_data()
+
+    session.close.assert_called_once()
+
+
+def test_use_auth_error_closes_session() -> None:
+    """Test that an auth error after connecting drops the ServerQuery session."""
+    session = _session()
+    session.use.side_effect = _query_error("520")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        with pytest.raises(TeamspeakApiClientAuthenticationError):
+            client.get_data()
+
+    session.quit.assert_called_once()
+    assert client._session is None
+
+
+def test_close_swallows_quit_error() -> None:
+    """Test that a failing quit does not break unload."""
+    session = _session()
+    session.quit.side_effect = RuntimeError("already gone")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        client.get_data()
+        client.close()
+
+    assert client._session is None
+
+
+def test_login_error_survives_failing_session_close() -> None:
+    """Test that a broken close does not mask the original login error."""
+    session = _session()
+    session.login.side_effect = _query_error("1793")
+    session.close.side_effect = RuntimeError("already gone")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        with pytest.raises(TeamspeakApiClientCommunicationError, match="1793"):
+            client.get_data()
+
+
+def test_invalid_serverinfo_closes_session() -> None:
+    """Test that malformed ServerQuery data closes the session."""
+    session = _session()
+    session.serverinfo.side_effect = ValueError("bad payload")
+
+    with patch(TS3_CONNECTION, return_value=session):
+        client = TeamspeakApiClient("127.0.0.1", "serveradmin", "secret")
+        with pytest.raises(
+            TeamspeakApiClientCommunicationError, match="Could not read data"
+        ):
             client.get_data()
 
     session.quit.assert_called_once()
