@@ -9,10 +9,10 @@ Contributing to this project should be as easy and transparent as possible, whet
 
 ## GitLab is used for development
 
-GitLab is used to host code and to track issues, feature requests and merge
-requests. `master` and every release are mirrored to
-[GitHub](https://github.com/P4nto/homeassistant-teamspeak) for the Home
-Assistant Marketplace (formerly HACS).
+GitLab hosts the code, merge requests and internal planning. Public bug
+reports and feature requests use GitHub issues. `master` and every release are
+mirrored to [GitHub](https://github.com/P4nto/homeassistant-teamspeak) for the
+Home Assistant Marketplace (formerly HACS).
 
 Merge requests are the best way to propose changes to the codebase.
 
@@ -67,7 +67,7 @@ the tag was not protected. Never tag a commit before its version bump is merged.
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
 
-## Report bugs using GitHub [issues](https://github.com/P4nto/homeassistant-teamspeak/issues)
+## Report bugs using GitHub issues
 
 GitHub issues are used to track public bugs.
 Report a bug by [opening a new issue](https://github.com/P4nto/homeassistant-teamspeak/issues); it's that easy!
