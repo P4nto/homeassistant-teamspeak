@@ -66,6 +66,7 @@ async def async_setup_entry(
 class TeamspeakSensor(TeamspeakEntity, SensorEntity):
     """Sensor showing the state of a TeamSpeak 3 Server."""
 
+    _attr_translation_key = "status"
     _attr_icon = ICON
     _unrecorded_attributes = frozenset({"clients", "channels"})
 

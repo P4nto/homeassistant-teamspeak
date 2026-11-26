@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pytest
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.teamspeak.const import DOMAIN
@@ -34,11 +35,14 @@ async def test_sensor_state_and_attributes(hass):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
 
-        state = hass.states.get("sensor.test_server")
+        state = hass.states.get("sensor.test_server_status")
         clients_state = hass.states.get("sensor.test_server_clients_online")
         uptime_state = hass.states.get("sensor.test_server_uptime")
 
     assert state is not None
+    assert state.entity_id == "sensor.test_server_status"
+    assert state.attributes["friendly_name"] == "Test Server Status"
+    assert er.async_get(hass).async_get(state.entity_id).unique_id == entry.entry_id
     assert state.state == "online"
     assert state.attributes["serverinfo"]["unique_identifier"] == "server-uuid"
     assert state.attributes["clients"] == CLIENTS_RAW

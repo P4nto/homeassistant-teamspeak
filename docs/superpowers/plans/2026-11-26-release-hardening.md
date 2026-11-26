@@ -23,7 +23,7 @@ Kanonisch wird `X.Y.Z` ohne `v`. Das funktionierende Release und der GitHub-Tag 
 - Release-Jobs bleiben `interruptible: false`; GitHub-Mirror bleibt über `resource_group: github-mirror` serialisiert.
 - Änderungen laufen über Feature-Branch, Commit, Push und MR nach `master`, Assignee `p4nto`.
 - Keine Produktiv-Deployments oder Runner-Änderungen aus diesem Plan.
-- Entity-Unique-IDs bleiben stabil; nur der Anzeigename des Status-Sensors ändert sich bewusst.
+- Entity-Unique-IDs bleiben stabil; der Status-Sensor erhält bewusst einen neuen Anzeigenamen (und damit für Neuanlagen eine neue Entity-ID; bestehende Registry-Einträge bleiben unverändert).
 
 ## Review Focus
 
@@ -31,7 +31,7 @@ Kanonisch wird `X.Y.Z` ohne `v`. Das funktionierende Release und der GitHub-Tag 
 |---|---|---|
 | Falsches Tag-Präfix (`v0.5.3`) | Pipeline bricht vor dem Release ab | `tests/test_release_config.py` |
 | Tag war bei Pipeline-Start nicht geschützt | Preflight bricht mit verständlicher Meldung ab | Task 1 `release-preflight` |
-| Status-Sensor heißt nur wie das Gerät | Anzeigename ist „Status“, Entity-ID bleibt `sensor.test_server` | `tests/test_sensor.py` |
+| Status-Sensor heißt nur wie das Gerät | Anzeigename ist „Test Server Status“, Unique-ID bleibt unverändert | `tests/test_sensor.py` |
 | Auth-Fehler im Coordinator | `ConfigEntryAuthFailed`, nicht `UpdateFailed` | `tests/test_coordinator.py` |
 | Release Notes leer/falsch | Notes aus `CHANGELOG.md` passen zur Manifest-Version | `tests/test_changelog.py` |
 
@@ -128,11 +128,13 @@ Run: `.venv/bin/pytest tests/test_metadata.py -v && .venv/bin/ruff check . && .v
 
 **Interfaces:**
 - Consumes: bestehender Unique-ID ohne Suffix
-- Produces: `entity.sensor.status.name`; Anzeigename „Status“, Entity-ID unverändert `sensor.test_server`
+- Produces: `entity.sensor.status.name`; Anzeigename „Test Server Status“, Unique-ID unverändert
+
+**Korrektur während der Umsetzung:** Die ursprüngliche Annahme „Anzeigename `Status`, Entity-ID `sensor.test_server`" war falsch. Home Assistant kombiniert bei `_attr_has_entity_name = True` den Gerätenamen mit dem übersetzten Entity-Namen und leitet daraus die Entity-ID ab. Bestehende Registry-Einträge behalten ihre Entity-ID; neue Installationen erhalten `sensor.test_server_status`.
 
 - [ ] **Step 1: Failing Test schreiben**
 
-Im bestehenden Setup-Test: `assert state.entity_id == "sensor.test_server"` und `assert state.attributes["friendly_name"] == "Status"`.
+Im bestehenden Setup-Test: `assert state.entity_id == "sensor.test_server_status"`, `assert state.attributes["friendly_name"] == "Test Server Status"` und `assert er.async_get(hass).async_get(state.entity_id).unique_id == entry.entry_id`.
 
 - [ ] **Step 2: Test laufen lassen**
 

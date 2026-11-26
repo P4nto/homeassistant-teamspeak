@@ -31,6 +31,9 @@
   },
   "entity": {
     "sensor": {
+      "status": {
+        "name": "Status"
+      },
       "clients_online": {
         "name": "Clients online"
       },
